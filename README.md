@@ -18,7 +18,6 @@ Este proyecto implementa métodos **no paramétricos** (ECDF, Bootstrap, Monte C
 - Calcular el ROP usando métodos determinísticos, probabilísticos y no paramétricos.
 - Implementar la función de distribución empírica (ECDF).
 - Implementar Bootstrap + Monte Carlo para demanda y lead time.
-- Ofrecer código listo para uso empresarial en inventarios reales.
 - Comparar métodos bajo estacionalidad, tendencia y varianza elevada.
 
 ---

@@ -26,7 +26,7 @@ Este proyecto implementa métodos **no paramétricos** (ECDF, Bootstrap, Monte C
 
 ## 1. Modelo determinístico
 
-$$ROP = \bar{L}\,\bar{D}$$
+$$ROP = \bar{L} \times \bar{D}$$
 
 - $\bar{L}$: lead time promedio  
 - $\bar{D}$: demanda promedio por unidad de tiempo  
@@ -43,7 +43,7 @@ $$ROP = \bar{L}\bar{D} + z \sqrt{\bar{L}\sigma_D^2 + \bar{D}^2\sigma_L^2}$$
 donde:
 
 - $\hat{D}_{L}$: demanda estimada durante el *lead time*
-- $SS$: inventario de seguridad *safety inventory*
+- $SS$: inventario de seguridad (*safety inventory*)
 - $\sigma_D^2$: varianza de la demanda  
 - $\sigma_L^2$: varianza del lead time  
 - $z$: cuantil normal del nivel de servicio deseado

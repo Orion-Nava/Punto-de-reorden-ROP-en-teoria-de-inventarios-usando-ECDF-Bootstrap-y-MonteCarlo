@@ -28,9 +28,7 @@ Este proyecto implementa métodos **no paramétricos** (ECDF, Bootstrap, Monte C
 
 ## 1. Modelo determinístico
 
-\[
-ROP = \bar{L}\,\bar{D}
-\]
+\[ROP = \bar{L}\,\bar{D}\]
 
 - \(\bar{L}\): lead time promedio  
 - \(\bar{D}\): demanda promedio por unidad de tiempo  
@@ -124,55 +122,3 @@ Si demanda y lead time son **independientes**:
 
 ---
 
-# Código Python (Listo para Usar)
-
-```python
-import numpy as np
-
-# -----------------------------------------------------
-# Método 1: ROP empírico (ECDF)
-# -----------------------------------------------------
-def rop_empirico(d, L, SL=0.90):
-    """
-    d: vector de demanda histórica
-    L: vector de lead times históricos (mismo tamaño o independientes)
-    SL: nivel de servicio deseado
-    """
-    DL = np.array(d) * np.array(L)
-    return np.quantile(DL, SL)
-
-
-# -----------------------------------------------------
-# Método 2: Bootstrap + Monte Carlo
-# -----------------------------------------------------
-def rop_bootstrap(d, L, SL=0.90, B=100000, emparejados=False):
-    """
-    d, L: vectores históricos.
-    emparejados=False -> D y L se asumen independientes.
-    emparejados=True  -> remuestreo por pares.
-    """
-    if emparejados:
-        idx = np.random.randint(0, len(d), B)
-        d_star = np.array(d)[idx]
-        L_star = np.array(L)[idx]
-    else:
-        d_star = np.random.choice(d, size=B, replace=True)
-        L_star = np.random.choice(L, size=B, replace=True)
-
-    DL_star = d_star * L_star
-    return np.quantile(DL_star, SL)
-
-
-# -----------------------------------------------------
-# Método 3: Convolución empírica (Independence Shuffle)
-# -----------------------------------------------------
-def rop_shuffle(d, L, SL=0.90, B=100000):
-    """
-    d y L se asumen independientes.
-    Combina permutaciones aleatorias de ambas muestras.
-    """
-    d_perm = np.random.choice(d, size=B, replace=True)
-    L_perm = np.random.choice(L, size=B, replace=True)
-
-    DL = d_perm * L_perm
-    return np.quantile(DL, SL)

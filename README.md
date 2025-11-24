@@ -78,7 +78,7 @@ $$ROP = \hat{F}_n^{-1}(SL)$$
 
 Demanda:
 
-$$d_1^{\ast},\dots,d_B^{*} \sim \{d_1,\dots,d_n\}$$
+$$d_{1}^{*},\dots,d_{B}^{*} \sim \{d_1,\dots,d_n\}$$
 
 Lead time:
 
@@ -98,9 +98,9 @@ $$ROP = \text{quantile}(D_L^{*}, SL)$$
 
 Si demanda y lead time son **independientes**:
 
-1. Se permuta el vector de demanda.  
-2. Se permuta el vector de lead time.  
-3. Se generan miles de combinaciones posibles.  
+1. Se permuta el vector de demanda.
+2. Se permuta el vector de lead time.
+3. Se generan miles de combinaciones posibles.
 4. Se obtiene el cuantil del nivel de servicio.
 
 ---

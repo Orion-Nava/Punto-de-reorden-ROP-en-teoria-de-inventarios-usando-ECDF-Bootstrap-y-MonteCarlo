@@ -1,86 +1,178 @@
-# Punto-de-reorden-ROP-en-teoria-de-inventarios-usando-simulacion-Monte-Carlo
+# Punto de Reorden (ROP) con Simulación Monte Carlo
+### Cálculo del ROP cuando la demanda y/o el lead time no siguen distribuciones normales
 
-____________________________________
+---
 
-Los modelos clásicos del punto de reorden (ROP) en teoría de inventarios asumen distribuciones normales para la demanda y tiempos de entrega. En este proyecto se usa simulación Monte Carlo para establecer puntos de reorden en escenarios donde no se cumplen tales supuestos.
+## Descripción del proyecto
 
-__________________________________
+En la teoría clásica de inventarios, el **punto de reorden (ROP)** indica el nivel de inventario en el que debe emitirse un pedido para evitar quiebres de stock durante el **tiempo de entrega** (*lead time*).
 
-El **punto de reorden (ROP)** es el nivel de inventario en el que debe emitirse un nuevo pedido para reabastecer antes de que el stock se agote, considerando el tiempo que tarda en llegar el pedido.
+Los modelos tradicionales del ROP asumen distribuciones **normales** tanto para la demanda como para el tiempo de entrega.  
+En la práctica, esto rara vez ocurre: la demanda puede ser lognormal, gamma, Poisson, o presentar estacionalidad y tendencia; mientras que los tiempos de entrega suelen tener colas largas (Gamma, Lognormal, Weibull).
 
-___________________________________
+Este proyecto implementa métodos **no paramétricos** (ECDF, Bootstrap, Monte Carlo) para calcular el ROP sin asumir normalidad.
 
+---
 
-**Modelo determinístico**
+## Objetivos
 
-Si no consideramos incertidumbre en el modelo:
+- Calcular el ROP usando métodos determinísticos, probabilísticos y no paramétricos.
+- Implementar la función de distribución empírica (ECDF).
+- Implementar Bootstrap + Monte Carlo para demanda y lead time.
+- Ofrecer código listo para uso empresarial en inventarios reales.
+- Comparar métodos bajo estacionalidad, tendencia y varianza elevada.
 
-$$ROP = \bar{L} \times \bar{D}$$
+---
+
+# Modelos paramétricos clásicos
+
+## 1. Modelo determinístico
+
+\[
+ROP = \bar{L}\,\bar{D}
+\]
+
+- \(\bar{L}\): lead time promedio  
+- \(\bar{D}\): demanda promedio por unidad de tiempo  
+- Nivel de servicio implícito ≈ **50%**
+
+---
+
+## 2. Modelo probabilístico normal
+
+\[
+ROP = \bar{L}\bar{D} + 
+z \sqrt{\bar{L}\sigma_D^2 + \bar{D}^2\sigma_L^2}
+\]
 
 donde:
 
-ROP = Punto de reorden
+- \(\sigma_D^2\): varianza de la demanda  
+- \(\sigma_L^2\): varianza del lead time  
+- \(z\): cuantil normal del nivel de servicio deseado
 
-- $\bar{L}$ = Tiempo de entrega promedio de pedidos (*lead time*)
+**Limitación:** funciona solo si ambas variables son normales e independientes.
 
-- $\bar{D}$ = Demanda promedio por unidad de tiempo
+---
 
-_________________________________________________
+# Métodos No Paramétricos
+
+Cuando demanda y lead time **no** son normales, se usan métodos empíricos.
+
+---
+
+# Método 1. Función de Distribución Empírica (ECDF)
+
+La demanda durante el lead time se define como:
+
+\[
+D_{L,i} = L_i \cdot D_i
+\]
+
+La ECDF es:
+
+\[
+\hat{F}_n(x) = \frac{1}{n}\sum_{i=1}^{n}1\{D_{L,i} \le x\}
+\]
+
+El ROP es el **cuantil empírico**:
+
+\[
+ROP = \hat{F}_n^{-1}(SL)
+\]
+
+---
+
+# Método 2. Bootstrap + Simulación Monte Carlo
+
+### Si hay pocos datos, se remuestrea con reemplazo:
+
+Demanda:
+
+\[
+d_1^{*},\dots,d_B^{*} \sim \{d_1,\dots,d_n\}
+\]
+
+Lead time:
+
+\[
+l_1^{*},\dots,l_B^{*} \sim \{l_1,\dots,l_m\}
+\]
+
+Demanda durante el LT simulada:
+
+\[
+D_{L,i}^{*} = d_i^{*}\,l_i^{*}
+\]
+
+ROP no paramétrico:
+
+\[
+ROP = \text{quantile}(D_L^{*}, SL)
+\]
+
+---
+
+# Método 3. Convolución Empírica (Independence Shuffle)
+
+Si demanda y lead time son **independientes**:
+
+1. Se permuta el vector de demanda.  
+2. Se permuta el vector de lead time.  
+3. Se generan miles de combinaciones posibles.  
+4. Se obtiene el cuantil del nivel de servicio.
+
+---
+
+# Código Python (Listo para Usar)
+
+```python
+import numpy as np
+
+# -----------------------------------------------------
+# Método 1: ROP empírico (ECDF)
+# -----------------------------------------------------
+def rop_empirico(d, L, SL=0.90):
+    """
+    d: vector de demanda histórica
+    L: vector de lead times históricos (mismo tamaño o independientes)
+    SL: nivel de servicio deseado
+    """
+    DL = np.array(d) * np.array(L)
+    return np.quantile(DL, SL)
 
 
-**Modelo probabilístico**
+# -----------------------------------------------------
+# Método 2: Bootstrap + Monte Carlo
+# -----------------------------------------------------
+def rop_bootstrap(d, L, SL=0.90, B=100000, emparejados=False):
+    """
+    d, L: vectores históricos.
+    emparejados=False -> D y L se asumen independientes.
+    emparejados=True  -> remuestreo por pares.
+    """
+    if emparejados:
+        idx = np.random.randint(0, len(d), B)
+        d_star = np.array(d)[idx]
+        L_star = np.array(L)[idx]
+    else:
+        d_star = np.random.choice(d, size=B, replace=True)
+        L_star = np.random.choice(L, size=B, replace=True)
 
-Si consideramos incertidumbre en el modelo:
-
-$$ROP = \hat{D}_L + SS$$
-
-$$ROP = \bar{L} \times \bar{D} + z\sqrt{\bar{L} \sigma_{D}^2 + \bar{D}^2 \sigma_{L}^2}$$
-
-- SS = Inventario de seguridad (*stock security*)
-
-- $\bar{L}$ = Tiempo de entrega promedio de pedidos (*lead time*)
-
-- $\bar{D}$ = Demanda promedio por unidad de tiempo
-
-- $\sigma_{D}^{2}$ = Varianza de la demanda
-
-- $\sigma_{L}^2$ = Varianza de los tiempos de entrega
-
-- $z$ = Cuantil normal estándar del nivel del servicio deseado
-
-Los supuestos son que la demanda y el tiempo de entrega son independientes y que tienen distribución aproximadamente normal
-
-_____________________________________________________
+    DL_star = d_star * L_star
+    return np.quantile(DL_star, SL)
 
 
-El modelo determinístico se usa más con fines pedagógicos; el nivel de servicio (*SL: Service Level*) que proporciona es de 50 %, ya que se basa en promedios como tal. Por otro lado, en la práctica la demanda y los tiempos no siempre tienen distribución normal. En cadenas de suministro, por ejemplo, lo usual es que la demanda tenga distribución normal o Poisson, mientras que el tiempo de entrega suele tener distribución log normal, gamma o Weibull. En tales casos, no es conveniente aplicar la fórmula probabilística clásica para el cálculo del ROP; en su lugar, conviene implementar métodos no paramétricos:
+# -----------------------------------------------------
+# Método 3: Convolución empírica (Independence Shuffle)
+# -----------------------------------------------------
+def rop_shuffle(d, L, SL=0.90, B=100000):
+    """
+    d y L se asumen independientes.
+    Combina permutaciones aleatorias de ambas muestras.
+    """
+    d_perm = np.random.choice(d, size=B, replace=True)
+    L_perm = np.random.choice(L, size=B, replace=True)
 
-
-- Usar la función de distribución empírica (cuando hay suficientes datos).
-
-- Usar Bootstrap y simulación Monte Carlo (cuando los datos son pocos).
-
-__________________________________________________________
-
-**Usando la función de distribución empírica de la demanda durante el tiempo de entrega**
-
-1. Multiplicar tiempos de entrega por datos de demanda y obtener vector de demanda durante los tiempos de entrega.
-
-$$D_{L, i} = L_{i} \times D_{i}, \qquad i = 1, 2, n$$
-
-2. Construir la *función de distribución empírica*, que se define como:
-
-$$\hat{F}_{n}(x) = \frac{1}{n} \sum_{i=1}^{n}1\{D_{L, i}\geq x\}$$
-
-3. Tomar como ROP el cuantil empírico correspondiente al nivel de servicio deseado.
-
-
-____________________________________________________________
-
-**Usando Bootstrap y Simulación Monte Carlo**
-
-1. 
-
-
-
-
+    DL = d_perm * L_perm
+    return np.quantile(DL, SL)

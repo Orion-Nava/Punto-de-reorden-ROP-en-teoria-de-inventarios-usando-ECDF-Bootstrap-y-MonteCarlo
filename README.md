@@ -70,7 +70,7 @@ $$D_{L, i} = L_{i} \times D_{i}, \qquad i = 1, 2, n$$
 
 2. Construir la *función de distribución empírica*, que se define como:
 
-$$\hat{F}_{n}(x) = \frac{1}{n} \sum_{i=1}^{n}1\left\{D_{L, i}\geq x\right\}$$
+$$\hat{F}_{n}(x) = \frac{1}{n} \sum_{i=1}^{n}1\{D_{L, i}\geq x\}$$
 
 3. Tomar como ROP el cuantil empírico correspondiente al nivel de servicio deseado.
 

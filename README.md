@@ -1,6 +1,4 @@
-# Punto de Reorden (ROP) usando la CDFE, bootstrap y simulación Monte Carlo
-
-### Cálculo del ROP cuando la demanda y/o el lead time no siguen distribuciones normales
+# Cálculo no paramétrico del Punto de Reorden (ROP) mediante ECDF, Bootstrap y Simulación Monte Carlo
 
 ---
 

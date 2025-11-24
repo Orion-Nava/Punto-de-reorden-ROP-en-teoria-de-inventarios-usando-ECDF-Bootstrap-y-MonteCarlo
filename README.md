@@ -48,14 +48,38 @@ $$ROP = \bar{L} \times \bar{D} + z\sqrt{\bar{L} \sigma_{D}^2 + \bar{D}^2 \sigma_
 
 - $z$ = Cuantil normal estándar del nivel del servicio deseado
 
-Los supuestos son que la demanda y el tiempo de entrega son idependientes y que tienen distribución aproximadamente normal
+Los supuestos son que la demanda y el tiempo de entrega son independientes y que tienen distribución aproximadamente normal
 
 _____________________________________________________
 
 
-El uso del modelo determinístico es más con fines pedagógicos; el nivel de servicio (*SL: Service Level*) que proporciona es de 50 %, ya que se basa en promedios como tal.
+El modelo determinístico se usa más con fines pedagógicos; el nivel de servicio (*SL: Service Level*) que proporciona es de 50 %, ya que se basa en promedios como tal. Por otro lado, en la práctica la demanda y los tiempos no siempre tienen distribución normal. En cadenas de suministro, por ejemplo, lo usual es que la demanda tenga distribución normal o Poisson, mientras que el tiempo de entrega suele tener distribución log normal, gamma o Weibull. En tales casos, no es conveniente aplicar la fórmula probabilística clásica para el cálculo del ROP; en su lugar, conviene implementar métodos no paramétricos:
 
 
+- Usar la función de distribución empírica (cuando hay suficientes datos).
+
+- Usar Bootstrap y simulación Monte Carlo (cuando los datos son pocos).
+
+__________________________________________________________
+
+**Usando la función de distribución empírica de la demanda durante el tiempo de entrega**
+
+1. Multiplicar tiempos de entrega por datos de demanda y obtener vector de demanda durante los tiempos de entrega.
+
+$$D_{L, i} = L_{i} \times D_{i}, \qquad i = 1, 2, n$$
+
+2. Construir la *función de distribución empírica*, que se define como:
+
+$$\hat{F}_{n}(x) = \frac{1}{n} \sum_{i=1}^{n}1\left\{D_{L, i}\geq x\right\}$$
+
+3. Tomar como ROP el cuantil empírico correspondiente al nivel de servicio deseado.
+
+
+____________________________________________________________
+
+**Usando Bootstrap y Simulación Monte Carlo**
+
+1. 
 
 
 

@@ -1,4 +1,5 @@
-# Punto de Reorden (ROP) con Simulación Monte Carlo
+# Punto de Reorden (ROP) usando la CDFE, bootstrap y simulación Monte Carlo
+
 ### Cálculo del ROP cuando la demanda y/o el lead time no siguen distribuciones normales
 
 ---
@@ -92,7 +93,7 @@ $$D_{L,i}^{\ast} = d_i^{\ast} \cdot l_i^{\ast}$$
 
 ROP no paramétrico:
 
-ROP = \text{quantile}(D_L^{\ast}, SL)
+$$ROP = \text{quantile}(D_L^{\ast}, SL)$$
 
 ---
 

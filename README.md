@@ -92,7 +92,7 @@ $$D_{L,i}^{\ast} = d_i^{\ast} \cdot l_i^{\ast}$$
 
 ROP no paramétrico:
 
-$$ROP = \text{quantile}(D_L^{*}, SL)$$
+ROP = \text{quantile}(D_L^{\ast}, SL)
 
 ---
 

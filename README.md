@@ -102,9 +102,9 @@ $$ROP = \text{quantile}(D_L^{\ast}, SL)$$
 
 Si demanda y lead time son **independientes**:
 
-1. Se remuestrea la demanda con reemplazo (**bootstrap de** \(D\)).
-2. Se remuestrea el lead time con reemplazo (**bootstrap de** \(L\)).
-3. Se generan miles de combinaciones independientes \(D^{*} \times L^{*}\) mediante **Monte Carlo**.
+1. Se remuestrea la demanda con reemplazo (**bootstrap de** $D$).
+2. Se remuestrea el lead time con reemplazo (**bootstrap de** $L$).
+3. Se generan miles de combinaciones independientes $D^{\ast} \times L^{\ast}$ mediante **Monte Carlo**.
 4. Se obtiene el **cuantil empírico** del nivel de servicio objetivo a partir de la distribución simulada de $D^{\ast}L^{\ast}$.
 
 

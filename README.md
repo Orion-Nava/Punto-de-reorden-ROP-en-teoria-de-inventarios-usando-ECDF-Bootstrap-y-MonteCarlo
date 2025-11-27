@@ -98,14 +98,15 @@ $$ROP = \text{quantile}(D_L^{\ast}, SL)$$
 
 ---
 
-# Método 3. Convolución Empírica (Independence Shuffle)
+### Método 3. Convolución Empírica (Independence Shuffle)
 
 Si demanda y lead time son **independientes**:
 
-1. Se permuta el vector de demanda.
-2. Se permuta el vector de lead time.
-3. Se generan miles de combinaciones posibles.
-4. Se obtiene el cuantil del nivel de servicio.
+1. Se remuestrea la demanda con reemplazo (**bootstrap de** \(D\)).
+2. Se remuestrea el lead time con reemplazo (**bootstrap de** \(L\)).
+3. Se generan miles de combinaciones independientes \(D^{*} \times L^{*}\) mediante **Monte Carlo**.
+4. Se obtiene el **cuantil empírico** del nivel de servicio objetivo a partir de la distribución simulada de \(D^{*}L^{*}\).
+
 
 ---
 
